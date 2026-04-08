@@ -1,0 +1,25 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "npx remotion studio",
+    "render": "npx remotion render",
+    "build": "npx remotion render src/index.ts",
+    "preview": "npx remotion preview",
+    "install-ffmpeg": "bash tools/ffmpeg_install.sh"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.420",
+    "@remotion/google-fonts": "^4.0.420",
+    "@remotion/media": "^4.0.420",
+    "@remotion/transitions": "^4.0.420",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.420"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.13",
+    "typescript": "^5.9.3"
+  }
+}

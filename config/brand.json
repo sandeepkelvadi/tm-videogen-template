@@ -1,0 +1,10 @@
+{
+  "primaryColor": "#922e23",
+  "accentColor": "#fdae2f",
+  "backgroundColor": "#000000",
+  "textColor": "#ffffff",
+  "fontFamily": "Poppins",
+  "fontWeights": ["400", "600", "700"],
+  "logoPath": "logo.png",
+  "websiteUrl": "https://example.com"
+}

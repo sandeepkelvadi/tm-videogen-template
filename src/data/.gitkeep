@@ -1,0 +1,4 @@
+// Placeholder data file — replace with your actual video segments
+// See config/campaign.json for CTA and branding settings
+
+export const SAMPLE_SEGMENTS = [];

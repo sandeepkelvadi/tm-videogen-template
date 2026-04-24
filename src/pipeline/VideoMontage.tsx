@@ -107,8 +107,12 @@ export function VideoMontage<T>({
         <Audio
           src={staticFile(musicSrc)}
           volume={(f) => {
-            const fadeInEnd = Math.round(0.5 * fps);
-            const fadeOutStart = durationInFrames - Math.round(1.5 * fps);
+            // Voiceover (peakVolume ≥ 1.0) gets a 2-frame in/out so closing
+            // words aren't ducked; background music gets a 0.5s in / 1.5s out.
+            const isVoiceover = peakVolume >= 1.0;
+            const fadeInEnd = isVoiceover ? 2 : Math.round(0.5 * fps);
+            const fadeOutLen = isVoiceover ? 2 : Math.round(1.5 * fps);
+            const fadeOutStart = durationInFrames - fadeOutLen;
             return interpolate(
               f,
               [0, fadeInEnd, fadeOutStart, durationInFrames],

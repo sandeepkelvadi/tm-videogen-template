@@ -3,14 +3,14 @@ import { staticFile } from "remotion";
 import { Video } from "@remotion/media";
 import { KenBurnsImage } from "./KenBurnsImage";
 import { SuperTextInline } from "./SuperText";
-import { VideoMontage, VideoMontageProps } from "./VideoMontage";
-import { MediaSegment, AdVideoV2Props } from "../types";
+import { VideoMontage } from "./VideoMontage";
+import { MediaSegment, AdVideoV2Props, MontageConfig } from "../types";
 
-const CONFIG = {
+const CONFIG: MontageConfig = {
   transitionFrames: 10,
   endCardFrames: 75,
   logo: {
-    position: "left" as const,
+    position: "left",
     sizeVertical: 44,
     sizeSquare: 36,
     paddingVertical: "5%",
@@ -23,17 +23,34 @@ const MediaScene: React.FC<{
   isVertical: boolean;
   width: number;
   height: number;
-}> = ({ segment, isVertical, width, height }) => {
+  letterbox?: boolean;
+}> = ({ segment, isVertical, width, height, letterbox }) => {
   const fontSize = isVertical ? 44 : 38;
 
-  const effectiveSrc = isVertical && segment.verticalSrc
-    ? segment.verticalSrc
-    : segment.src;
-  const sourceAspect = (isVertical && segment.verticalSrc) ? 9 / 16 : 16 / 9;
+  // Letterbox mode: force the landscape source and contain-fit it on the
+  // canvas (black bars top/bottom on a vertical canvas). Otherwise use the
+  // pre-cropped vertical source (if provided) and cover-fit.
+  const effectiveSrc = letterbox
+    ? segment.src
+    : isVertical && segment.verticalSrc
+      ? segment.verticalSrc
+      : segment.src;
+  const sourceAspect = letterbox
+    ? 16 / 9
+    : (isVertical && segment.verticalSrc) ? 9 / 16 : 16 / 9;
   const targetAspect = width / height;
   let videoWidth: number;
   let videoHeight: number;
-  if (targetAspect > sourceAspect) {
+  if (letterbox) {
+    // Contain: fit fully inside canvas without cropping.
+    if (targetAspect > sourceAspect) {
+      videoHeight = height;
+      videoWidth = height * sourceAspect;
+    } else {
+      videoWidth = width;
+      videoHeight = width / sourceAspect;
+    }
+  } else if (targetAspect > sourceAspect) {
     videoWidth = width;
     videoHeight = width / sourceAspect;
   } else {
@@ -77,6 +94,7 @@ const MediaScene: React.FC<{
         <KenBurnsImage
           src={effectiveSrc}
           direction={segment.kenBurns ?? "zoom-in"}
+          fit={segment.fit}
         />
       )}
 
@@ -111,8 +129,13 @@ const MediaScene: React.FC<{
 export const AdVideoV2: React.FC<AdVideoV2Props> = ({
   segments,
   musicSrc,
+  musicVolume,
   endCardCtaText,
+  letterbox,
 }) => {
+  const config: MontageConfig = musicVolume != null
+    ? { ...CONFIG, musicVolume }
+    : CONFIG;
   return (
     <VideoMontage
       segments={segments}
@@ -122,11 +145,12 @@ export const AdVideoV2: React.FC<AdVideoV2Props> = ({
           isVertical={ctx.isVertical}
           width={ctx.width}
           height={ctx.height}
+          letterbox={letterbox}
         />
       )}
       musicSrc={musicSrc}
       endCardCtaText={endCardCtaText}
-      config={CONFIG}
+      config={config}
     />
   );
 };

@@ -1,4 +1,5 @@
 export type KenBurnsDirection = "zoom-in" | "zoom-out" | "pan-left" | "pan-right";
+export type KenBurnsFit = "cover" | "contain";
 
 export type MediaSegment = {
   type: "video" | "image";
@@ -7,6 +8,7 @@ export type MediaSegment = {
   text: string;
   playbackRate?: number;
   kenBurns?: KenBurnsDirection;
+  fit?: KenBurnsFit;
 };
 
 export type DaySegment = {
@@ -17,6 +19,7 @@ export type DaySegment = {
   activity: string;
   playbackRate?: number;
   kenBurns?: KenBurnsDirection;
+  fit?: KenBurnsFit;
 };
 
 export type BrollCutaway = {
@@ -26,7 +29,9 @@ export type BrollCutaway = {
   startSec: number;
   durationSec: number;
   kenBurns?: KenBurnsDirection;
+  fit?: KenBurnsFit;
   playbackRate?: number;
+  videoStartFrom?: number;
 };
 
 export type CinematicSegment = {
@@ -36,6 +41,7 @@ export type CinematicSegment = {
   text?: string;
   playbackRate?: number;
   kenBurns?: KenBurnsDirection;
+  fit?: KenBurnsFit;
 };
 
 export type MontageConfig = {
@@ -54,7 +60,14 @@ export type MontageConfig = {
 export type AdVideoV2Props = {
   segments: MediaSegment[];
   musicSrc?: string;
+  musicVolume?: number;
   endCardCtaText?: string;
+  /**
+   * Letterbox mode: force the landscape `src` (ignore `verticalSrc`) and
+   * contain-fit the video on the canvas. On a 9:16 canvas the result is a
+   * 16:9 clip centered with black bars above and below.
+   */
+  letterbox?: boolean;
 };
 
 export type DayAtSchoolProps = {

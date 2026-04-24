@@ -134,6 +134,7 @@ export const FounderSpeaks: React.FC<FounderSpeaksProps> = ({
                 <KenBurnsImage
                   src={bSrc}
                   direction={b.kenBurns ?? "zoom-in"}
+                  fit={b.fit}
                 />
               )}
             </AbsoluteFill>
@@ -239,8 +240,12 @@ export const FounderSpeaks: React.FC<FounderSpeaksProps> = ({
         <Audio
           src={staticFile(musicSrc)}
           volume={(f) => {
-            const fadeInEnd = Math.round(0.5 * fps);
-            const fadeOutStart = durationInFrames - Math.round(1.5 * fps);
+            // Voiceover (musicVolume ≥ 1.0) gets a 2-frame in/out so closing
+            // words aren't ducked; background music gets 0.5s in / 1.5s out.
+            const isVoiceover = musicVolume >= 1.0;
+            const fadeInEnd = isVoiceover ? 2 : Math.round(0.5 * fps);
+            const fadeOutLen = isVoiceover ? 2 : Math.round(1.5 * fps);
+            const fadeOutStart = durationInFrames - fadeOutLen;
             return interpolate(
               f,
               [0, fadeInEnd, fadeOutStart, durationInFrames],
